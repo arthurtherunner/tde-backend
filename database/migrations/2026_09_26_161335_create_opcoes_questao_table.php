@@ -1,0 +1,24 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('opcoes_questao', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('questao_id')->constrained('questoes')->onDelete('cascade');
+            $table->string('texto_opcao');
+            $table->boolean('correta')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('opcoes_questao');
+    }
+};
