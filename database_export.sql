@@ -15,7 +15,7 @@ INSERT INTO migrations VALUES(11,'2026_09_26_022756_create_personal_access_token
 INSERT INTO migrations VALUES(12,'2026_09_26_161334_create_curso_user_table',1);
 INSERT INTO migrations VALUES(13,'2026_09_26_161335_create_opcoes_questao_table',1);
 CREATE TABLE IF NOT EXISTS "users" ("id" integer primary key autoincrement not null, "email" varchar not null, "nome" varchar not null, "tipo" varchar check ("tipo" in ('admin', 'autor')) not null, "senha" varchar not null, "created_at" datetime, "updated_at" datetime);
-INSERT INTO users VALUES(1,'admin@unifan.com','Admin','admin','$2y$12$jBBmDiU2uZfVn/E7945TluATpn5LiRSWu56M1pse75uBRi2bAiwri','2026-09-26 16:30:30','2026-09-26 16:30:30');
+INSERT INTO users VALUES(1,'admin@unifan.com','Admin','admin','$2y$12$jBBmDiU2uZfVn/E7945TluATpn5LiRSWu56M1pse75uBRi2bAiwri','2026-09-26 16:30:30','2026-09-27 22:17:04');
 INSERT INTO users VALUES(2,'autor@unifan.com','Professor Exemplo','autor','$2y$12$IkYK7xAdboajNCQnzhIheuTLb.rUIGDuPwqZx0yl97NOjuIG7dCe.','2026-09-26 16:30:30','2026-09-26 16:30:30');
 CREATE TABLE IF NOT EXISTS "cache" ("key" varchar not null, "value" text not null, "expiration" integer not null, primary key ("key"));
 CREATE TABLE IF NOT EXISTS "cache_locks" ("key" varchar not null, "owner" varchar not null, "expiration" integer not null, primary key ("key"));
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "curso_user" ("id" integer primary key autoincrement 
 CREATE TABLE IF NOT EXISTS "opcoes_questao" ("id" integer primary key autoincrement not null, "questao_id" integer not null, "texto_opcao" varchar not null, "correta" tinyint(1) not null default '0', "created_at" datetime, "updated_at" datetime, foreign key("questao_id") references "questoes"("id") on delete cascade);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('migrations',13);
-INSERT INTO sqlite_sequence VALUES('users',2);
+INSERT INTO sqlite_sequence VALUES('users',4);
 CREATE UNIQUE INDEX "users_email_unique" on "users" ("email");
 CREATE INDEX "cache_expiration_index" on "cache" ("expiration");
 CREATE INDEX "cache_locks_expiration_index" on "cache_locks" ("expiration");
