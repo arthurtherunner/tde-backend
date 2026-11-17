@@ -1,0 +1,76 @@
+@baseUrl = http://127.0.0.1:8000/api
+
+### 1. Login admin
+# @name loginAdmin
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{"email": "admin@unifan.com", "senha": "12345678"}
+
+###
+@token = {{loginAdmin.response.body.access_token}}
+
+### 2. Login autor
+# @name loginAutor
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{"email": "autor@unifan.com", "senha": "12345678"}
+
+###
+@tokenAutor = {{loginAutor.response.body.access_token}}
+
+### 3. Criar curso (esperado 201)
+POST {{baseUrl}}/cursos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"nome": "Análise e Desenvolvimento de Sistemas", "descricao": "ADS", "formato": "presencial"}
+
+### 4. Listar cursos (esperado 200)
+GET {{baseUrl}}/cursos
+Authorization: Bearer {{token}}
+
+### 5. Criar disciplina (esperado 201)
+POST {{baseUrl}}/disciplinas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"nome": "Programação Backend", "descricao": "API", "carga_horaria": 80, "turno": "noturno", "curso_id": 1}
+
+### 6. Disciplinas do curso 1 (esperado 200)
+GET {{baseUrl}}/cursos/1/disciplinas
+Authorization: Bearer {{token}}
+
+### 7. Remover curso com disciplina (esperado 409)
+DELETE {{baseUrl}}/cursos/1
+Authorization: Bearer {{token}}
+
+### 8. Associar autor ao curso 1 (esperado 200)
+PUT {{baseUrl}}/users/2/cursos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"cursos": [1]}
+
+### 9. Associar autor à disciplina 1 (esperado 200)
+PUT {{baseUrl}}/users/2/disciplinas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"disciplinas": [1]}
+
+### 10. Listar disciplinas do autor (esperado 200)
+GET {{baseUrl}}/users/2/disciplinas
+Authorization: Bearer {{token}}
+
+### 11. Remover disciplina com usuário associado (esperado 409)
+DELETE {{baseUrl}}/disciplinas/1
+Authorization: Bearer {{token}}
+
+### 12. Autor tentando criar curso (esperado 403)
+POST {{baseUrl}}/cursos
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{"nome": "Teste", "descricao": "x", "formato": "ead"}
