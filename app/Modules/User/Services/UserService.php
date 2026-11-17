@@ -10,7 +10,6 @@ class UserService
 {
     public function list(int $perPage = 15)
     {
-        // paginação em disco, na descrição do tde
         return User::paginate($perPage);
     }
 
@@ -26,13 +25,12 @@ class UserService
             'nome' => $data['nome'],
             'email' => $data['email'],
             'tipo' => $data['tipo'],
-            'senha' => Hash::make($data['senha'] ?? 'senha123'), // senha padrão se admin não informar
+            'senha' => Hash::make($data['senha'] ?? 'senha123'),
         ]);
     }
 
     public function update(User $user, array $data, User $authUser): User
     {
-        // só o próprio usuário pode alterar suas informações
         if ($authUser->id !== $user->id) {
             abort(403, 'Você só pode alterar suas próprias informações.');
         }
@@ -72,7 +70,6 @@ class UserService
 
     public function resetPassword(User $user): User
     {
-        //só admin chama o metodo, q ta checado no controller
         $user->update(['senha' => Hash::make('senha123')]);
 
         return $user;
@@ -80,10 +77,10 @@ class UserService
 
     public function delete(User $user): void
     {
-        // if ($user->questoes()->exists() || $user->avaliacoes()->exists()) {
-        //     abort(422, 'Não é possível remover um usuário que possui questões ou avaliações criadas.');
-        // }
+        if ($user->questoes()->exists() || $user->avaliacoes()->exists()) {
+            abort(409, 'Não é possível remover um usuário que possui questões ou avaliações criadas.');
+        }
 
-    $user->delete();
+        $user->delete();
     }
 }
