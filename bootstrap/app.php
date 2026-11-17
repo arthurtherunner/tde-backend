@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Auth\Middleware\AdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,8 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Rotas de API nunca devem redirecionar pra uma tela de login;
-        // sempre devolvem JSON (401) quando não autenticado.
+        $middleware->alias([
+            'admin' => AdminMiddleware::class,
+        ]);
+
+        // Rotas de API nunca redirecionam: devolvem 401 em JSON
         $middleware->redirectGuestsTo(function (Request $request) {
             return $request->is('api/*') ? null : route('login');
         });
