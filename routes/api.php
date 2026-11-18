@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Auth\Controllers\AuthController;
+use App\Modules\Avaliacao\Controllers\AvaliacaoController;
 use App\Modules\Curso\Controllers\CursoController;
 use App\Modules\Disciplina\Controllers\DisciplinaController;
 use App\Modules\Questao\Controllers\QuestaoController;
@@ -33,6 +34,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/questoes', [QuestaoController::class, 'store']);
     Route::put('/questoes/{questao}', [QuestaoController::class, 'update']);
     Route::delete('/questoes/{questao}', [QuestaoController::class, 'destroy']);
+
+    // Avaliações (as regras de quem pode ficam no Service)
+    Route::post('/avaliacoes', [AvaliacaoController::class, 'store']);
+    Route::put('/avaliacoes/{avaliacao}', [AvaliacaoController::class, 'update']);
+    Route::delete('/avaliacoes/{avaliacao}', [AvaliacaoController::class, 'destroy']);
 
     // Escrita: apenas admin
     Route::middleware('admin')->group(function () {

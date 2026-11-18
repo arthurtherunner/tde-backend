@@ -128,3 +128,121 @@ Content-Type: application/json
 ### 17. Listar questões da disciplina 1 como autor (esperado 200)
 GET {{baseUrl}}/disciplinas/1/questoes
 Authorization: Bearer {{tokenAutor}}
+
+### 18. Autor cria avaliação (esperado 201)
+# @name criarAvaliacao
+POST {{baseUrl}}/avaliacoes
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{
+  "curso_id": 1,
+  "disciplina_id": 1,
+  "semestre": "2026.2",
+  "data_avaliacao": "2026-12-10",
+  "tipo": "AV2",
+  "valor": 10,
+  "quantidade_questoes_multipla": 1,
+  "quantidade_questoes_abertas": 1
+}
+
+###
+@avaliacaoId = {{criarAvaliacao.response.body.id}}
+
+### 19. Admin tentando criar avaliação (esperado 403)
+POST {{baseUrl}}/avaliacoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "curso_id": 1,
+  "disciplina_id": 1,
+  "semestre": "2026.2",
+  "data_avaliacao": "2026-12-10",
+  "tipo": "AV2",
+  "valor": 10,
+  "quantidade_questoes_multipla": 1,
+  "quantidade_questoes_abertas": 1
+}
+
+### 20. Tipo de avaliação inválido (esperado 422)
+POST {{baseUrl}}/avaliacoes
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{
+  "curso_id": 1,
+  "disciplina_id": 1,
+  "semestre": "2026.2",
+  "data_avaliacao": "2026-12-10",
+  "tipo": "AV9",
+  "valor": 10,
+  "quantidade_questoes_multipla": 1,
+  "quantidade_questoes_abertas": 1
+}
+
+### 21. Autor edita a própria avaliação (esperado 200)
+PUT {{baseUrl}}/avaliacoes/{{avaliacaoId}}
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{"semestre": "2026.2", "valor": 8}
+
+### 22. Admin edita a avaliação do autor (esperado 200)
+PUT {{baseUrl}}/avaliacoes/{{avaliacaoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"valor": 10}
+
+### 23. Admin cria o autor 2 (esperado 201, ou 422 se já existir)
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"nome": "Autor Dois", "email": "autor2@unifan.com", "tipo": "autor", "senha": "12345678"}
+
+### 24. Login autor 2 (esperado 200)
+# @name loginAutor2
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{"email": "autor2@unifan.com", "senha": "12345678"}
+
+###
+@tokenAutor2 = {{loginAutor2.response.body.access_token}}
+
+### 25. Autor 2 tenta editar avaliação de outro autor (esperado 403)
+PUT {{baseUrl}}/avaliacoes/{{avaliacaoId}}
+Authorization: Bearer {{tokenAutor2}}
+Content-Type: application/json
+
+{"valor": 5}
+
+### 26. Autor 2 tenta remover avaliação de outro autor (esperado 403)
+DELETE {{baseUrl}}/avaliacoes/{{avaliacaoId}}
+Authorization: Bearer {{tokenAutor2}}
+
+### 27. Autor cria uma avaliação extra, só para remover (esperado 201)
+# @name criarExtra
+POST {{baseUrl}}/avaliacoes
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{
+  "curso_id": 1,
+  "disciplina_id": 1,
+  "semestre": "2026.2",
+  "data_avaliacao": "2026-12-15",
+  "tipo": "FINAL",
+  "valor": 10,
+  "quantidade_questoes_multipla": 2,
+  "quantidade_questoes_abertas": 0
+}
+
+###
+@extraId = {{criarExtra.response.body.id}}
+
+### 28. Autor remove a avaliação extra (esperado 204)
+DELETE {{baseUrl}}/avaliacoes/{{extraId}}
+Authorization: Bearer {{tokenAutor}}
