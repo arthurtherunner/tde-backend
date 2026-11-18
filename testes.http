@@ -74,3 +74,57 @@ Authorization: Bearer {{tokenAutor}}
 Content-Type: application/json
 
 {"nome": "Teste", "descricao": "x", "formato": "ead"}
+
+### 13. Autor cria questão de múltipla escolha (esperado 201)
+POST {{baseUrl}}/questoes
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{
+  "tipo": "multipla_escolha",
+  "nivel_dificuldade": "facil",
+  "descricao": "Qual verbo HTTP é usado para criar um recurso?",
+  "disciplina_id": 1,
+  "quantidade_opcoes": 4,
+  "opcoes": [
+    {"texto_opcao": "GET", "correta": false},
+    {"texto_opcao": "POST", "correta": true},
+    {"texto_opcao": "DELETE", "correta": false},
+    {"texto_opcao": "PATCH", "correta": false}
+  ]
+}
+
+### 14. Autor cria questão aberta (esperado 201)
+POST {{baseUrl}}/questoes
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{"tipo": "aberta", "nivel_dificuldade": "media", "descricao": "Explique o que é uma API REST.", "disciplina_id": 1}
+
+### 15. Admin tentando criar questão (esperado 403)
+POST {{baseUrl}}/questoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"tipo": "aberta", "nivel_dificuldade": "facil", "descricao": "Teste", "disciplina_id": 1}
+
+### 16. Quantidade de opções diferente das enviadas (esperado 422)
+POST {{baseUrl}}/questoes
+Authorization: Bearer {{tokenAutor}}
+Content-Type: application/json
+
+{
+  "tipo": "multipla_escolha",
+  "nivel_dificuldade": "dificil",
+  "descricao": "Teste de validação",
+  "disciplina_id": 1,
+  "quantidade_opcoes": 3,
+  "opcoes": [
+    {"texto_opcao": "A", "correta": true},
+    {"texto_opcao": "B", "correta": false}
+  ]
+}
+
+### 17. Listar questões da disciplina 1 como autor (esperado 200)
+GET {{baseUrl}}/disciplinas/1/questoes
+Authorization: Bearer {{tokenAutor}}
